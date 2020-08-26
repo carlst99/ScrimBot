@@ -1,4 +1,7 @@
 ﻿using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using ScrimBot.Commands;
 using Serilog;
 using System;
 using System.IO;
@@ -8,6 +11,8 @@ namespace ScrimBot
 {
     public class Program
     {
+        public const string COMMAND_PREFIX = "sb!";
+
         // Permissions integer: 268504128
         // - Manage Roles
         // - Send Messages
@@ -26,6 +31,7 @@ namespace ScrimBot
 #else
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
+                .WriteTo.Console()
                 .WriteTo.File(GetAppdataFilePath("log.log"))
                 .CreateLogger();
 #endif
@@ -35,7 +41,17 @@ namespace ScrimBot
 
         public async Task MainAsync()
         {
+            DiscordSocketClient client = new DiscordSocketClient();
+            client.Log += LogMessage;
 
+            await client.LoginAsync(TokenType.Bot, "NzQ3NjgzMDY5NzM3MDQxOTcw.X0ScHw.5rQE5cjD4-y1O4ajgUk6UHJ-BF8").ConfigureAwait(false);
+            await client.StartAsync().ConfigureAwait(false);
+
+            CommandHandler handler = new CommandHandler(client, new CommandService());
+            await handler.InstallCommandsAsync().ConfigureAwait(false);
+
+            Console.ReadKey();
+            await client.StopAsync().ConfigureAwait(false);
         }
 
         private Task LogMessage(LogMessage message)
