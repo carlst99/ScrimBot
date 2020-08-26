@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Discord.WebSocket;
+using System;
 using System.Collections.Generic;
 
 namespace ScrimBot
@@ -18,6 +19,17 @@ namespace ScrimBot
                 list[k] = list[n];
                 list[n] = value;
             }
+        }
+    }
+
+    public static class SocketGuildUserExtensions
+    {
+        public static string GetEasyName(this SocketGuildUser user)
+        {
+            if (!string.IsNullOrEmpty(user.Nickname))
+                return user.Nickname;
+            else
+                return user.Username.Split("#")[0];
         }
     }
 }

@@ -32,21 +32,13 @@ namespace ScrimBot.Commands
 
             int teamOneCount = users.Count / 2;
             for (int i = 0; i < teamOneCount; i++)
-                reply += "\r\n" + GetName(users[i]);
+                reply += "\r\n" + users[i].GetEasyName();
 
             reply += "\r\n**Team Two**";
             for (int i = teamOneCount; i < users.Count; i++)
-                reply += "\r\n" + GetName(users[i]);
+                reply += "\r\n" + users[i].GetEasyName();
 
             await ReplyAsync(reply).ConfigureAwait(false);
-        }
-
-        private string GetName(SocketGuildUser user)
-        {
-            if (!string.IsNullOrEmpty(user.Nickname))
-                return user.Nickname;
-            else
-                return user.Username.Split("#")[0];
         }
     }
 }

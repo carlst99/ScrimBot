@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using ScrimBot.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,12 +9,16 @@ namespace ScrimBot.Commands
 {
     public class AccDistModule : ModuleBase<SocketCommandContext>
     {
-        private static readonly Dictionary<SocketUser, SocketRole> _distributionDms = new Dictionary<SocketUser, SocketRole>();
+        //private static readonly Dictionary<SocketUser, SocketRole> _distributionDms = new Dictionary<SocketUser, SocketRole>();
 
         [Command("distribute")]
         public async Task DistributeCommand(SocketRole role)
         {
             SocketUser sender = Context.User;
+            if (AccDistService.AddRequest(Context.User, new DistributionRequest(Context.Channel, role)))
+            {
+
+            }
 
             if (!_distributionDms.ContainsKey(sender))
             {

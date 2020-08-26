@@ -30,14 +30,18 @@ namespace ScrimBot.Commands
 
             IEnumerable<IUser> usersWhoReacted = await message.GetReactionUsersAsync(emote, int.MaxValue).FlattenAsync().ConfigureAwait(false);
 
+            string users = string.Empty;
             foreach (IUser user in usersWhoReacted)
             {
                 SocketGuildUser guildUser = Context.Guild.GetUser(user.Id);
                 await guildUser.AddRoleAsync(role).ConfigureAwait(false);
+                users += guildUser.GetEasyName() + ", ";
             }
 
             typingState.Dispose();
-            await ReplyAsync("Roles added!").ConfigureAwait(false);
+            await ReplyAsync("Role added to the following members: " + users.TrimEnd(',', ' ')).ConfigureAwait(false);
+
+            // TODO list people to which the roles were added
         }
 
         [Command("remove-role")]
@@ -47,11 +51,15 @@ namespace ScrimBot.Commands
         {
             IDisposable typingState = Context.Channel.EnterTypingState();
 
+            string users = string.Empty;
             foreach (SocketGuildUser user in role.Members)
+            {
                 await user.RemoveRoleAsync(role).ConfigureAwait(false);
+                users += user.GetEasyName() + ", ";
+            }
 
             typingState.Dispose();
-            await ReplyAsync("Role removed!").ConfigureAwait(false);
+            await ReplyAsync("Role removed from the following users: " + users.TrimEnd(',', ' ')).ConfigureAwait(false);
         }
     }
 }
