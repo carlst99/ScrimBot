@@ -5,6 +5,7 @@ using ScrimBot.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace ScrimBot.Services
@@ -111,7 +112,30 @@ namespace ScrimBot.Services
 
         private static async Task CompleteRequest(SocketCommandContext context, DistributionRequest request)
         {
-            
+            const string message = "Below are the details for your Jaeger account. Please abide by the following rules:\r\n" +
+                "- Do not share this account with anyone else\r\n" +
+                "- Remove this account from the launcher when the scrim is complete\r\n" +
+                "- Do not delete any characters from the account\r\n" +
+                "- Do not put any characters through the ASP program\r\n\r\n";
+
+            foreach (AccountInfo info in request.Accounts)
+            {
+                string individualMessage = message;
+                individualMessage += $"Jaegar Account Username: {info.AccountUserName}\r\n";
+                individualMessage += $"Jaegar Account Password: {info.AccountPassword}\r\n";
+                IDMChannel channel = await info.User.GetOrCreateDMChannelAsync().ConfigureAwait(false);
+                await channel.SendMessageAsync(individualMessage).ConfigureAwait(false);
+                await channel.CloseAsync().ConfigureAwait(false);
+            }
+
+            // Build and send the confirmation message
+            string reply = $"Accounts have been distributed to {request.Role.Mention}. Check your DMs! Pairings are:";
+            foreach (AccountInfo info in request.Accounts)
+                reply += $"\r\n{info}";
+
+            await request.RequestChannel.SendMessageAsync(reply).ConfigureAwait(false);
+            await context.Channel.SendMessageAsync("Accounts distributed!").ConfigureAwait(false);
+
             RemoveRequest(context.User);
         }
 
