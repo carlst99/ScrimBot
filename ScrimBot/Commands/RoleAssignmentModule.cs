@@ -39,7 +39,7 @@ namespace ScrimBot.Commands
             }
 
             typingState.Dispose();
-            await ReplyAsync("Role added to the following members: " + users.TrimEnd(',', ' ')).ConfigureAwait(false);
+            await ReplyAsync($"The role {role.Mention} was added to the following members: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
 
             // TODO list people to which the roles were added
         }
@@ -59,7 +59,7 @@ namespace ScrimBot.Commands
             }
 
             typingState.Dispose();
-            await ReplyAsync("Role removed from the following users: " + users.TrimEnd(',', ' ')).ConfigureAwait(false);
+            await ReplyAsync($"The role {role.Mention} was removed from the following users: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
         }
     }
 }

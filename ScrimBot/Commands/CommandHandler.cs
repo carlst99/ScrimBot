@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using ScrimBot.Services;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -31,31 +32,31 @@ namespace ScrimBot.Commands
             if (!(messageParam is SocketUserMessage message))
                 return;
 
-            if (messageParam.Channel is IDMChannel)
-            {
-                System.Threading.Thread.Sleep(10);
-            }
-
-            // Create a number to track where the prefix ends and the command begins
-            int argPos = 0;
-
-            // Determine if the message is a command based on the prefix and make sure no bots trigger commands
-            if (!(message.HasStringPrefix(Program.COMMAND_PREFIX, ref argPos) ||
-                message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
-                message.Author.IsBot)
-            {
+            // Make sure we aren't triggered by bots
+            if (message.Author.IsBot)
                 return;
-            }
 
             // Create a WebSocket-based command context based on the message
             var context = new SocketCommandContext(_client, message);
 
-            // Execute the command with the command context we just
-            // created, along with the service provider for precondition checks.
+            // Check if we have received a DM
+            if (messageParam.Channel is IDMChannel)
+            {
+                await AccDistService.HandleRequest(context).ConfigureAwait(false);
+                return;
+            }
+
+            // Determine if the message is a command based on the prefix and make sure no bots trigger commands
+            int argPos = 0;
+            if (!(message.HasStringPrefix(Program.COMMAND_PREFIX, ref argPos) ||
+                message.HasMentionPrefix(_client.CurrentUser, ref argPos)))
+            {
+                return;
+            }
 
             // Keep in mind that result does not indicate a return value
             // rather an object stating if the command executed successfully.
-            var result = await _commands.ExecuteAsync(context, argPos, null).ConfigureAwait(false);
+            IResult result = await _commands.ExecuteAsync(context, argPos, null).ConfigureAwait(false);
 
             // Optionally, we may inform the user if the command fails
             // to be executed; however, this may not always be desired,

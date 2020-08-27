@@ -1,45 +1,38 @@
-﻿using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.WebSocket;
+using ScrimBot.Model;
 using ScrimBot.Services;
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 
 namespace ScrimBot.Commands
 {
     public class AccDistModule : ModuleBase<SocketCommandContext>
     {
-        //private static readonly Dictionary<SocketUser, SocketRole> _distributionDms = new Dictionary<SocketUser, SocketRole>();
-
-        [Command("distribute")]
+        [Command("distribute-accounts")]
+        [Summary("Begins a request to distribute accounts to members of a particular role via their DMs")]
         public async Task DistributeCommand(SocketRole role)
         {
-            SocketUser sender = Context.User;
-            if (AccDistService.AddRequest(Context.User, new DistributionRequest(Context.Channel, role)))
-            {
+            IDisposable typing = Context.Channel.TriggerTypingAsync();
 
-            }
+            // Create an account distribution request and attempt to add it to the distribution service
+            DistributionRequest request = new DistributionRequest(Context.User, Context.Channel, role);
+            if (await AccDistService.AddRequest(request).ConfigureAwait(false))
+                await ReplyAsync($"Please check your DMs {Context.User.Mention}! This request will time out in five minutes.").ConfigureAwait(false);
+            else
+                await ReplyAsync($"{Context.User.Mention}, a distribution request has already been sent to you! Use the 'clear-account-distribution' command to cancel it.").ConfigureAwait(false);
 
-            if (!_distributionDms.ContainsKey(sender))
-            {
-                _distributionDms.Add(sender, role);
-
-                IDMChannel channel = await sender.GetOrCreateDMChannelAsync().ConfigureAwait(false);
-                await channel.SendMessageAsync("Copy the accounts over from your spreadsheet program, and send them in your next message. The format should be: \r\nuser1    pass1\r\nuser2    pass2\r\n...\r\nWhere there are four spaces between the username and password").ConfigureAwait(false);
-
-                await ReplyAsync("Please check your DMs!").ConfigureAwait(false);
-            } else
-            {
-                await ReplyAsync("A distribution request has already been sent to you! Use the 'clear-distribution' command to cancel this").ConfigureAwait(false);
-            }
+            typing.Dispose();
         }
 
-        [Command("clear-distribution")]
+        [Command("clear-account-distribution")]
+        [Summary("Attemps to clear an account distribution request made by the sender")]
         public async Task ClearDistributionCommand()
         {
-            bool wasRemoved = _distributionDms.Remove(Context.User);
-
-            await ReplyAsync("Distribution Cancellation Success: " + wasRemoved).ConfigureAwait(false);
+            if (AccDistService.RemoveRequest(Context.User))
+                await ReplyAsync($"{Context.User.Mention}, your request was successfully cancelled.").ConfigureAwait(false);
+            else
+                await ReplyAsync($"I couldn't cancel your request {Context.User.Mention}. Please wait for it to time out, or make one in the first place.").ConfigureAwait(false);
         }
     }
 }
