@@ -32,11 +32,11 @@ namespace ScrimBot.Commands
 
             int teamOneCount = users.Count / 2;
             for (int i = 0; i < teamOneCount; i++)
-                reply += "\r\n" + users[i].GetEasyName();
+                reply += "\r\n" + users[i].GetFriendlyName();
 
             reply += "\r\n**Team Two**";
             for (int i = teamOneCount; i < users.Count; i++)
-                reply += "\r\n" + users[i].GetEasyName();
+                reply += "\r\n" + users[i].GetFriendlyName();
 
             await ReplyAsync(reply).ConfigureAwait(false);
         }

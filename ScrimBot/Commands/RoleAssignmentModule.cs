@@ -35,7 +35,7 @@ namespace ScrimBot.Commands
             {
                 SocketGuildUser guildUser = Context.Guild.GetUser(user.Id);
                 await guildUser.AddRoleAsync(role).ConfigureAwait(false);
-                users += guildUser.GetEasyName() + ", ";
+                users += guildUser.GetFriendlyName() + ", ";
             }
 
             typingState.Dispose();
@@ -55,7 +55,7 @@ namespace ScrimBot.Commands
             foreach (SocketGuildUser user in role.Members)
             {
                 await user.RemoveRoleAsync(role).ConfigureAwait(false);
-                users += user.GetEasyName() + ", ";
+                users += user.GetFriendlyName() + ", ";
             }
 
             typingState.Dispose();

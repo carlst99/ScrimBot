@@ -24,7 +24,7 @@ namespace ScrimBot
 
     public static class SocketGuildUserExtensions
     {
-        public static string GetEasyName(this SocketGuildUser user)
+        public static string GetFriendlyName(this SocketGuildUser user)
         {
             if (!string.IsNullOrEmpty(user.Nickname))
                 return user.Nickname;

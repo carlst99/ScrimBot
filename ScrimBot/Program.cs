@@ -11,6 +11,9 @@ namespace ScrimBot
 {
     public class Program
     {
+        /// <summary>
+        /// Gets the command prefix used by ScrimBot
+        /// </summary>
         public const string COMMAND_PREFIX = "sb!";
 
         // Permissions integer: 268504128
@@ -23,6 +26,7 @@ namespace ScrimBot
 
         public static void Main()
         {
+            // Setup Serilog
 #if DEBUG
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -32,28 +36,39 @@ namespace ScrimBot
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.Console()
-                .WriteTo.File(GetAppdataFilePath("log.log"))
+                .WriteTo.File(GetAppdataFolder("log.log"))
                 .CreateLogger();
 #endif
 
             new Program().MainAsync().GetAwaiter().GetResult();
         }
 
+        /// <summary>
+        /// Starts the bot
+        /// </summary>
         public async Task MainAsync()
         {
             DiscordSocketClient client = new DiscordSocketClient();
             client.Log += LogMessage;
 
-            await client.LoginAsync(TokenType.Bot, "NzQ3NjgzMDY5NzM3MDQxOTcw.X0ScHw.5rQE5cjD4-y1O4ajgUk6UHJ-BF8").ConfigureAwait(false);
+            // Get our token and start the client
+            string token = Environment.GetEnvironmentVariable("token", EnvironmentVariableTarget.Process);
+            await client.LoginAsync(TokenType.Bot, token).ConfigureAwait(false);
             await client.StartAsync().ConfigureAwait(false);
 
+            // Setup commands
             CommandHandler handler = new CommandHandler(client, new CommandService());
             await handler.InstallCommandsAsync().ConfigureAwait(false);
 
+            // Await console input to stop the program
             Console.ReadKey();
             await client.StopAsync().ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Routes the logging functionality of Discord.Net to Serilog
+        /// </summary>
+        /// <param name="message">The log message</param>
         private Task LogMessage(LogMessage message)
         {
             switch (message.Severity)
@@ -81,7 +96,10 @@ namespace ScrimBot
             return Task.CompletedTask;
         }
 
-        public static string GetAppdataFilePath()
+        /// <summary>
+        /// Retrieves the AppData folder for this app
+        /// </summary>
+        public static string GetAppdataFolder()
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
