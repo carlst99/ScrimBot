@@ -11,6 +11,9 @@ namespace ScrimBot.Services
 {
     public static class AccountDistributionService
     {
+        /// <summary>
+        /// Provides a backing store for any distribution requests
+        /// </summary>
         private static readonly List<DistributionRequest> _distributionRequests = new List<DistributionRequest>();
 
         /// <summary>

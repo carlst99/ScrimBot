@@ -18,6 +18,7 @@ namespace ScrimBot.Commands
             IDisposable typingState = Context.Channel.EnterTypingState();
             IMessage message = await Context.Channel.GetMessageAsync(messageID).ConfigureAwait(false);
 
+            // Attempt to find the right reaction on the message
             IEmote emote = null;
             try
             {
@@ -30,6 +31,7 @@ namespace ScrimBot.Commands
 
             IEnumerable<IUser> usersWhoReacted = await message.GetReactionUsersAsync(emote, int.MaxValue).FlattenAsync().ConfigureAwait(false);
 
+            // Add the role to each user who added a reaction
             string users = string.Empty;
             foreach (IUser user in usersWhoReacted)
             {
@@ -40,8 +42,6 @@ namespace ScrimBot.Commands
 
             typingState.Dispose();
             await ReplyAsync($"The role {role.Mention} was added to the following members: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
-
-            // TODO list people to which the roles were added
         }
 
         [Command("remove-role")]
