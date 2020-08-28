@@ -18,7 +18,7 @@ namespace ScrimBot.Commands
             // Create an account distribution request and attempt to add it to the distribution service
             DistributionRequest request = new DistributionRequest(Context.User, Context.Channel, role);
             if (await AccountDistributionService.AddRequest(request).ConfigureAwait(false))
-                await ReplyAsync($"Please check your DMs {Context.User.Mention}! This request will time out in five minutes.").ConfigureAwait(false);
+                await ReplyAsync($"Please check your DMs {Context.User.Mention}! This request will time out in {AccountDistributionService.TIMEOUT_MIN} minutes.").ConfigureAwait(false);
             else
                 await ReplyAsync($"{Context.User.Mention}, a distribution request has already been sent to you! Use the 'clear-account-distribution' command to cancel it.").ConfigureAwait(false);
 

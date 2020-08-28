@@ -6,15 +6,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace ScrimBot.Services
 {
     public static class AccountDistributionService
     {
         /// <summary>
-        /// Provides a backing store for any distribution requests
+        /// Defines the amount of time a request takes to timeout, in minutes
         /// </summary>
+        public const int TIMEOUT_MIN = 2;
+
         private static readonly List<DistributionRequest> _distributionRequests = new List<DistributionRequest>();
+        private static readonly Timer _requestTimeoutTimer;
+
+        static AccountDistributionService()
+        {
+            // Create a timer to remove old requests
+            _requestTimeoutTimer = new Timer(60000)
+            {
+                AutoReset = true,
+                Enabled = true
+            };
+            _requestTimeoutTimer.Elapsed += RemoveOldRequests;
+        }
 
         /// <summary>
         /// Adds an account distribution request to be processed
@@ -189,5 +204,25 @@ namespace ScrimBot.Services
         /// <param name="user">The user who made the request</param>
         private static DistributionRequest GetRequestByUser(SocketUser user)
             => _distributionRequests.First(u => u.User.Id.Equals(user.Id));
+
+        /// <summary>
+        /// Removes requests that have been alive longer than <see cref="TIMEOUT_MIN"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static async void RemoveOldRequests(object sender, ElapsedEventArgs e)
+        {
+            for (int i = 0; i < _distributionRequests.Count; i++)
+            {
+                DistributionRequest request = _distributionRequests[i];
+
+                if (DateTime.UtcNow > request.CreatedAt.AddMinutes(TIMEOUT_MIN))
+                {
+                    IDMChannel channel = await request.User.GetOrCreateDMChannelAsync().ConfigureAwait(false);
+                    await channel.SendMessageAsync("Your account distribution request has timed out.").ConfigureAwait(false);
+                    _distributionRequests.Remove(request);
+                }
+            }
+        }
     }
 }

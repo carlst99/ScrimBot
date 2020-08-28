@@ -1,4 +1,5 @@
 ﻿using Discord.WebSocket;
+using System;
 using System.Collections.Generic;
 
 namespace ScrimBot.Model
@@ -33,11 +34,18 @@ namespace ScrimBot.Model
         /// </summary>
         public bool WaitingOnConfirmation { get; set; }
 
+        /// <summary>
+        /// Gets the UTC time this request was created at
+        /// </summary>
+        public DateTime CreatedAt { get; }
+
         public DistributionRequest(SocketUser user, ISocketMessageChannel requestChannel, SocketRole role)
         {
             User = user;
             RequestChannel = requestChannel;
             Role = role;
+
+            CreatedAt = DateTime.UtcNow;
         }
     }
 }
