@@ -60,6 +60,8 @@ namespace ScrimBot
             CommandHandler handler = new CommandHandler(client, new CommandService());
             await handler.InstallCommandsAsync().ConfigureAwait(false);
 
+            await client.SetGameAsync(COMMAND_PREFIX, type: ActivityType.Listening).ConfigureAwait(false);
+
             // Await console input to stop the program
             Console.ReadKey();
             await client.StopAsync().ConfigureAwait(false);
