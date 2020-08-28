@@ -25,9 +25,9 @@ namespace ScrimBot.Commands
             typing.Dispose();
         }
 
-        [Command("clear-account-distribution")]
-        [Summary("Attemps to clear an account distribution request made by the sender")]
-        public async Task ClearDistributionCommand()
+        [Command("cancel-account-distribution")]
+        [Summary("Attemps to cancel an account distribution request made by the sender")]
+        public async Task CancelDistributionCommand()
         {
             if (AccountDistributionService.RemoveRequest(Context.User))
                 await ReplyAsync($"{Context.User.Mention}, your request was successfully cancelled.").ConfigureAwait(false);
