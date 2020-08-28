@@ -34,7 +34,7 @@ namespace ScrimBot.Model
 
         public override string ToString()
         {
-            return AccountUserName + "    " + User?.GetFriendlyName();
+            return AccountUserName + " - " + User?.GetFriendlyName();
         }
     }
 }

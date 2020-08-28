@@ -8,6 +8,11 @@ namespace ScrimBot
     {
         private readonly static Random _rng = new Random();
 
+        /// <summary>
+        /// Shuffles a list using the Fisher-Yates shuffle
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
         public static void Shuffle<T>(this IList<T> list)
         {
             int n = list.Count;
@@ -24,6 +29,10 @@ namespace ScrimBot
 
     public static class SocketGuildUserExtensions
     {
+        /// <summary>
+        /// Returns either a user's nickname, or their username stripped of the unique tag
+        /// </summary>
+        /// <param name="user"></param>
         public static string GetFriendlyName(this SocketGuildUser user)
         {
             if (!string.IsNullOrEmpty(user.Nickname))

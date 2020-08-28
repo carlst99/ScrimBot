@@ -42,7 +42,7 @@ namespace ScrimBot.Commands
             // Check if we have received a DM
             if (messageParam.Channel is IDMChannel)
             {
-                await AccDistService.HandleRequest(context).ConfigureAwait(false);
+                await AccountDistributionService.HandleRequest(context).ConfigureAwait(false);
                 return;
             }
 
