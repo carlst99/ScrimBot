@@ -161,7 +161,13 @@ namespace ScrimBot.Services
                 reply += $"\r\n{info}";
 
             await request.RequestChannel.SendMessageAsync(reply).ConfigureAwait(false);
-            await context.Channel.SendMessageAsync("Accounts distributed!").ConfigureAwait(false);
+
+            // Alert the requester that the distribution was complete,
+            // and provide them with a list that can be easily pasted into excel
+            reply = "Accounts distributed! Here's an easy-paste list:";
+            foreach (AccountInfo info in request.Accounts)
+                reply += $"\r\n{info.User.GetFriendlyName()}";
+            await context.Channel.SendMessageAsync(reply).ConfigureAwait(false);
 
             // Remove the request now that it is complete
             RemoveRequest(context.User);
