@@ -9,7 +9,7 @@ namespace ScrimBot.Commands
         [Summary("Explains each command offered by ScrimBot")]
         public async Task HelpCommand()
         {
-            string reply = "ScrimBot offers the following commands:\r\n" +
+            const string reply = "ScrimBot offers the following commands:\r\n" +
                 "**add-roles <messageID> <reactionEmote> <role>**\r\n" +
                 "Finds the message with the given ID, and assigns a role to all users who have reacted with the given emote\r\n\r\n" +
                 "**remove-role <role>**\r\n" +
