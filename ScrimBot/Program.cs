@@ -22,7 +22,7 @@ namespace ScrimBot
         // - Read Message History
         // - Add Reactions
         // - View Channels
-        // OAuth2 URL: https://discord.com/api/oauth2/authorize?client_id=747683069737041970&permissions=268504128&scope=bot
+        // OAuth2 URL: https://discord.com/api/oauth2/authorize?client_id=<YOUR_CLIENT_ID>&permissions=268504128&scope=bot
 
         public static void Main()
         {
