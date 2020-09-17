@@ -10,8 +10,8 @@ ScrimBot offers the following commands, which can be accessed with the prefix **
 
 - **help**  
 Shows information about all available commands
-- **add-roles [messageID] [reactionEmote] [role]**  
-Finds the message with the given ID, and assigns a role to all users who have reacted with the given emote
+- **add-roles [channelID] [messageID] [reactionEmote] [role]**  
+Finds the message with the given ID in the given channel, and assigns a role to all users who have reacted with the given emote
 
 - **remove-role [role]**  
 Removes the given role from all users who have been assigned it
