@@ -4,6 +4,8 @@ ScrimBot aims to streamline the process of organising scrims for a Planetside 2 
 
 ### Usage
 
+To use ScrimBot in your server, you will need to ensure that its role is higher than any roles you wish it to be capable of assigning.
+
 ScrimBot offers the following commands, which can be accessed with the prefix **sb!**:
 
 - **help**  
