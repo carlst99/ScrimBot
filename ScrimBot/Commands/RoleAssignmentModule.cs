@@ -13,10 +13,11 @@ namespace ScrimBot.Commands
         [Command("add-roles")]
         [Summary("Adds a role to all users who reacted to a message")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task AddRolesCommand(ulong messageID, string confirmationEmote, SocketRole role)
+        public async Task AddRolesCommand(ulong channelID, ulong messageID, string confirmationEmote, SocketRole role)
         {
             IDisposable typingState = Context.Channel.EnterTypingState();
-            IMessage message = await Context.Channel.GetMessageAsync(messageID).ConfigureAwait(false);
+            SocketTextChannel messageChannel = (SocketTextChannel)Context.Guild.GetChannel(channelID);
+            IMessage message = await messageChannel.GetMessageAsync(messageID).ConfigureAwait(false);
 
             // Attempt to find the right reaction on the message
             IEmote emote = null;
