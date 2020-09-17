@@ -43,11 +43,11 @@ namespace ScrimBot.Commands
             // Build the reply
             string reply = "**Team One**";
             if (leaderOne != null)
-                reply += " - Leader " + leaderOne.Mention;
+                reply += " - Leader " + leaderOne.GetFriendlyName();
             reply += teams.Item1;
             reply += "\r\n**Team Two**";
             if (leaderTwo != null)
-                reply += " - Leader " + leaderTwo.Mention;
+                reply += " - Leader " + leaderTwo.GetFriendlyName();
             reply += teams.Item2;
 
             await ReplyAsync(reply).ConfigureAwait(false);
