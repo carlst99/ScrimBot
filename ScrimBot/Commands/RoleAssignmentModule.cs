@@ -15,7 +15,7 @@ namespace ScrimBot.Commands
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task AddRolesCommand(ulong channelID, ulong messageID, string confirmationEmote, SocketRole role)
         {
-            IDisposable typingState = Context.Channel.EnterTypingState();
+            using IDisposable typingState = Context.Channel.EnterTypingState();
             SocketTextChannel messageChannel = (SocketTextChannel)Context.Guild.GetChannel(channelID);
             IMessage message = await messageChannel.GetMessageAsync(messageID).ConfigureAwait(false);
 
@@ -41,7 +41,6 @@ namespace ScrimBot.Commands
                 users += guildUser.GetFriendlyName() + ", ";
             }
 
-            typingState.Dispose();
             await ReplyAsync($"The role {role.Mention} was added to the following members: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
         }
 
@@ -50,7 +49,7 @@ namespace ScrimBot.Commands
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task RemoveRoleCommand(SocketRole role)
         {
-            IDisposable typingState = Context.Channel.EnterTypingState();
+            using IDisposable typingState = Context.Channel.EnterTypingState();
 
             string users = string.Empty;
             foreach (SocketGuildUser user in role.Members)
@@ -59,7 +58,6 @@ namespace ScrimBot.Commands
                 users += user.GetFriendlyName() + ", ";
             }
 
-            typingState.Dispose();
             await ReplyAsync($"The role {role.Mention} was removed from the following users: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
         }
     }

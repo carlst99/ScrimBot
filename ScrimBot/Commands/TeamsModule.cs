@@ -1,5 +1,4 @@
-﻿using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
@@ -14,6 +13,8 @@ namespace ScrimBot.Commands
         [Summary("Randomly places all users with a certain role into two teams, optionally allowing two team leaders to be chosen")]
         public async Task RandomiseCommand(SocketRole toRandomise, SocketGuildUser leaderOne = null, SocketGuildUser leaderTwo = null)
         {
+            using IDisposable isTyping = Context.Channel.EnterTypingState();
+
             // Prevent randomising the everyone role, as this could take forever and might be a mistake
             if (toRandomise.IsEveryone)
             {
@@ -27,8 +28,6 @@ namespace ScrimBot.Commands
                 await ReplyAsync("Two leaders must be specified.").ConfigureAwait(false);
                 return;
             }
-
-            IDisposable isTyping = Context.Channel.EnterTypingState();
 
             // Get all the users who have been assigned the provided role
             List<SocketGuildUser> users = toRandomise.Members.Where(u => !u.IsBot).ToList();
@@ -51,7 +50,6 @@ namespace ScrimBot.Commands
             reply += teams.Item2;
 
             await ReplyAsync(reply).ConfigureAwait(false);
-            isTyping.Dispose();
         }
 
         /// <summary>

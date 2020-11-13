@@ -13,7 +13,7 @@ namespace ScrimBot.Commands
         [Summary("Begins a request to distribute accounts to members of a particular role via their DMs")]
         public async Task DistributeCommand(SocketRole role)
         {
-            IDisposable typing = Context.Channel.TriggerTypingAsync();
+            using IDisposable typing = Context.Channel.TriggerTypingAsync();
 
             // Create an account distribution request and attempt to add it to the distribution service
             DistributionRequest request = new DistributionRequest(Context.User, Context.Channel, role);
@@ -21,8 +21,6 @@ namespace ScrimBot.Commands
                 await ReplyAsync($"Please check your DMs {Context.User.Mention}! This request will time out in {AccountDistributionService.TIMEOUT_MIN} minutes.").ConfigureAwait(false);
             else
                 await ReplyAsync($"{Context.User.Mention}, a distribution request has already been sent to you! Use the 'clear-account-distribution' command to cancel it.").ConfigureAwait(false);
-
-            typing.Dispose();
         }
 
         [Command("cancel-account-distribution")]
