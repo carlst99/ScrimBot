@@ -3,7 +3,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,19 +13,11 @@ namespace ScrimBot.Commands
         [Command("add-roles")]
         [Summary("Adds a role to all users who reacted to a message")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task AddRolesCommand(ulong channelID, ulong messageID, string confirmationEmote, SocketRole role)
+        public async Task AddRolesCommand(SocketTextChannel channel, ulong messageID, string confirmationEmote, SocketRole role)
         {
             using IDisposable typingState = Context.Channel.EnterTypingState();
 
-            // Get the channel in which the message is held
-            SocketTextChannel messageChannel = (SocketTextChannel)Context.Guild.GetChannel(channelID);
-            if (messageChannel is null)
-            {
-                await ReplyAsync("ScrimBot could not access that channel. Please make sure you have granted the relevant permissions to the channel/ScrimBot role").ConfigureAwait(false);
-                return;
-            }
-
-            IMessage message = await messageChannel.GetMessageAsync(messageID).ConfigureAwait(false);
+            IMessage message = await channel.GetMessageAsync(messageID).ConfigureAwait(false);
             if (message is null)
             {
                 await ReplyAsync("ScrimBot could not get the provided message. Please ensure you copied the right ID, and that ScrimBot has permissions to view the channel that the message was posted in").ConfigureAwait(false);
