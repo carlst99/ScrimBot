@@ -1,6 +1,6 @@
 # ScrimBot
 
-ScrimBot aims to streamline the process of organising scrims for a Planetside 2 outfit through Discord, by providing bulk role assigning functions, a random team generator and a Jaeger account distributor. Note that the role assign functions are specifically built for the way the outfit I am part of organises their scrims, wherein we make an announcment and ask all those interested to react to the message with a specific emote.
+ScrimBot aims to streamline the process of organising scrims for a Planetside 2 outfit through Discord, by providing bulk role assigning functions, a random team generator and a Jaeger account distributor. Note that the role assign functions are specifically built for the way the outfit I am part of (UVOC) organises their scrims, wherein we make an announcment and ask all those interested to react to the message with a specific emote.
 
 ### Usage
 
@@ -10,20 +10,23 @@ ScrimBot offers the following commands, which can be accessed with the prefix **
 
 - **help**  
 Shows information about all available commands
-- **add-roles [channelID] [messageID] [reactionEmote] [role]**  
-Finds the message with the given ID in the given channel, and assigns a role to all users who have reacted with the given emote
+
+- **add-roles [channel] [messageID] [reactionEmote] [role]**  
+Finds the message with the given ID in the given channel, and assigns a role to all users who have reacted with the given emote. 
+
+You can pass the `channel` and `role` arguments in as either links (e.g. #general, @scrim-role), names (e.g. general, scrim-role) or IDs.
 
 - **remove-role [role]**  
-Removes the given role from all users who have been assigned it
+Removes the given role from all users who have been assigned it.
 
 - **randomise [role] *[leaderOne] [leaderTwo]***  
-Randomly places all members with the provided role into two teams. Optionally, two leaders may be provided
+Randomly places all members with the provided role into two teams. Optionally, two leaders may be provided.
 
 - **distribute-accounts [role]**  
-Begins a guided process to distribute Jaeger accounts via DM to all users with the provided role
+Begins a guided process to distribute Jaeger accounts via DM to all users with the provided role.
 
 - **cancel-account-distribution**  
-Cancels an account distribution request made by the calling user
+Cancels an account distribution request made by the calling user.
 
 ### Setup
 
