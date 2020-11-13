@@ -27,10 +27,13 @@ Cancels an account distribution request made by the calling user
 
 ### Setup
 
+There isn't a hosted copy of ScrimBot available, therefore you'll need to run it yourself. Start by creating an application in the Discord developer portal - see the [Discord.Net documentation](https://discord.foxbot.me/stable/guides/getting_started/first-bot.html#creating-a-discord-bot) on creating a bot application.
 You'll need an SDK that supports .NET Standard 2.0 or higher to build ScrimBot. To run it, you will need to provide a *bot token* as an environment variable. To obtain a token, follow the instructions in the [Discord.Net documentation](https://discord.foxbot.me/stable/guides/getting_started/first-bot.html#creating-a-discord-bot). The environment variable should be structured as so:
 
 - Key: "token"
 - Value: "YOUR_BOT_TOKEN"
+
+Furthermore, you **must** ensure that you grant the `Presence Intent` and `Server Members Intent`. These can be found under the `Bot` tab of your application in the Discord Developer portal.
 
 ### Libraries Used
 

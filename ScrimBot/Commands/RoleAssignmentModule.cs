@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,8 +17,21 @@ namespace ScrimBot.Commands
         public async Task AddRolesCommand(ulong channelID, ulong messageID, string confirmationEmote, SocketRole role)
         {
             using IDisposable typingState = Context.Channel.EnterTypingState();
+
+            // Get the channel in which the message is held
             SocketTextChannel messageChannel = (SocketTextChannel)Context.Guild.GetChannel(channelID);
+            if (messageChannel is null)
+            {
+                await ReplyAsync("ScrimBot could not access that channel. Please make sure you have granted the relevant permissions to the channel/ScrimBot role").ConfigureAwait(false);
+                return;
+            }
+
             IMessage message = await messageChannel.GetMessageAsync(messageID).ConfigureAwait(false);
+            if (message is null)
+            {
+                await ReplyAsync("ScrimBot could not get the provided message. Please ensure you copied the right ID, and that ScrimBot has permissions to view the channel that the message was posted in").ConfigureAwait(false);
+                return;
+            }
 
             // Attempt to find the right reaction on the message
             IEmote emote = null;
@@ -30,6 +44,7 @@ namespace ScrimBot.Commands
                 return;
             }
 
+            // Get all the users who reacted to the message
             IEnumerable<IUser> usersWhoReacted = await message.GetReactionUsersAsync(emote, int.MaxValue).FlattenAsync().ConfigureAwait(false);
 
             // Add the role to each user who added a reaction
@@ -37,11 +52,17 @@ namespace ScrimBot.Commands
             foreach (IUser user in usersWhoReacted)
             {
                 SocketGuildUser guildUser = Context.Guild.GetUser(user.Id);
+                if (guildUser is null)
+                {
+                    await ReplyAsync("Could not add the role to " + user.Username).ConfigureAwait(false);
+                    continue;
+                }
+
                 await guildUser.AddRoleAsync(role).ConfigureAwait(false);
                 users += guildUser.GetFriendlyName() + ", ";
             }
 
-            await ReplyAsync($"The role {role.Mention} was added to the following members: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
+            await ReplyAsync($"The role '{role}' was added to the following members: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
         }
 
         [Command("remove-role")]
