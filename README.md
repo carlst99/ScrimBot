@@ -1,6 +1,6 @@
 # ScrimBot
 
-ScrimBot aims to streamline the process of organising scrims for a Planetside 2 outfit through Discord, by providing bulk role assigning functions, a random team generator and a Jaeger account distributor. Note that the role assign functions are specifically built for the way the outfit I am part of (UVOC) organises their scrims, wherein we make an announcment and ask all those interested to react to the message with a specific emote.
+ScrimBot aims to streamline the process of organising scrims for a Planetside 2 outfit through Discord, by providing bulk role assigning functions, a random team generator and a Jaeger account distributor. Note that the role assign functions are specifically built for the way the outfit I am part of (UVOC) organises their scrims, wherein we make an announcement and ask all those interested to react to the message with a specific emote.
 
 ### Usage
 
@@ -14,7 +14,7 @@ Shows information about all available commands
 - **add-roles [channel] [messageID] [reactionEmote] [role]**  
 Finds the message with the given ID in the given channel, and assigns a role to all users who have reacted with the given emote. 
 
-You can pass the `channel` and `role` arguments in as either links (e.g. #general, @scrim-role), names (e.g. general, scrim-role) or IDs.
+  You can pass the `channel` and `role` arguments in as either mentions (e.g. #general, @scrim-role), names (e.g. general, scrim-role) or IDs.
 
 - **remove-role [role]**  
 Removes the given role from all users who have been assigned it.
