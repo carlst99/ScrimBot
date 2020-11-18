@@ -70,7 +70,7 @@ namespace ScrimBot.Commands
                 users += user.GetFriendlyName() + ", ";
             }
 
-            await ReplyAsync($"The role {role.Mention} was removed from the following users: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
+            await ReplyAsync($"The role {role} was removed from the following users: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
         }
     }
 }
