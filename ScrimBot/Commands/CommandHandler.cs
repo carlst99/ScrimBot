@@ -29,7 +29,7 @@ namespace ScrimBot.Commands
         private async Task HandleCommandAsync(SocketMessage messageParam)
         {
             // Don't process the command if it was a system message
-            if (!(messageParam is SocketUserMessage message))
+            if (messageParam is not SocketUserMessage message)
                 return;
 
             // Make sure we aren't triggered by bots

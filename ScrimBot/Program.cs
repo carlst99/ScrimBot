@@ -33,11 +33,15 @@ namespace ScrimBot
                 .WriteTo.Console()
                 .CreateLogger();
 #else
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string logFile = Path.Combine(appDataPath, "ScrimBot", "log.log");
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.Console()
-                .WriteTo.File(GetAppdataFolder("log.log"))
+                .WriteTo.File(logFile)
                 .CreateLogger();
+            Log.Information("Logfile store at {logFile}", logFile);
 #endif
 
             new Program().MainAsync().GetAwaiter().GetResult();
@@ -52,7 +56,7 @@ namespace ScrimBot
             client.Log += LogMessage;
 
             // Get our token and start the client
-            string token = Environment.GetEnvironmentVariable("token", EnvironmentVariableTarget.Process);
+            string token = Environment.GetEnvironmentVariable("SCRIMBOT_TOKEN", EnvironmentVariableTarget.Process);
             await client.LoginAsync(TokenType.Bot, token).ConfigureAwait(false);
             await client.StartAsync().ConfigureAwait(false);
 
