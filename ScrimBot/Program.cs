@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Nito.AsyncEx;
 using ScrimBot.Commands;
 using Serilog;
 using System;
@@ -9,13 +10,8 @@ using System.Threading.Tasks;
 
 namespace ScrimBot
 {
-    public class Program
+    public static class Program
     {
-        /// <summary>
-        /// Gets the command prefix used by ScrimBot
-        /// </summary>
-        public const string COMMAND_PREFIX = "sb!";
-
         // Permissions integer: 268504128
         // - Manage Roles
         // - Send Messages
@@ -24,7 +20,21 @@ namespace ScrimBot
         // - View Channels
         // OAuth2 URL: https://discord.com/api/oauth2/authorize?client_id=<YOUR_CLIENT_ID>&permissions=268504128&scope=bot
 
-        public static void Main()
+        /// <summary>
+        /// The name of the environment variable storing our bot token
+        /// </summary>
+        private const string TOKEN_ENV_NAME = "SCRIMBOT_TOKEN";
+
+        /// <summary>
+        /// Gets the command prefix used by ScrimBot
+        /// </summary>
+        public const string COMMAND_PREFIX = "sb!";
+
+        public const string NAME = "ScrimBot";
+
+        private static DiscordSocketClient _client;
+
+        public static int Main()
         {
             // Setup Serilog
 #if DEBUG
@@ -33,8 +43,7 @@ namespace ScrimBot
                 .WriteTo.Console()
                 .CreateLogger();
 #else
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string logFile = Path.Combine(appDataPath, "ScrimBot", "log.log");
+            string logFile = Path.Combine(GetAppdataDirectory(), "NAME", "log.log");
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
@@ -44,38 +53,59 @@ namespace ScrimBot
             Log.Information("Logfile store at {logFile}", logFile);
 #endif
 
-            new Program().MainAsync().GetAwaiter().GetResult();
+            try
+            {
+                Log.Information("Starting");
+                AsyncContext.Run(MainAsync);
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Failed to start");
+                return 1;
+            }
+
+            Log.Information("Stopped");
+            return 0;
+        }
+
+        public static async Task MainAsync()
+        {
+            _client = new DiscordSocketClient();
+            _client.Log += LogMessage;
+
+            // Get our token and start the client
+            string token = Environment.GetEnvironmentVariable(TOKEN_ENV_NAME, EnvironmentVariableTarget.Process);
+            await _client.LoginAsync(TokenType.Bot, token).ConfigureAwait(false);
+            await _client.StartAsync().ConfigureAwait(false);
+
+            // Setup commands
+            CommandHandler handler = new CommandHandler(_client, new CommandService());
+            await handler.InstallCommandsAsync().ConfigureAwait(false);
+
+            // Show our prefix in the status
+            await _client.SetGameAsync(COMMAND_PREFIX + "help", type: ActivityType.Listening).ConfigureAwait(false);
+            await Task.Delay(-1).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Starts the bot
+        /// Retrieves the AppData folder for this app
         /// </summary>
-        public async Task MainAsync()
+        public static string GetAppdataDirectory()
         {
-            DiscordSocketClient client = new DiscordSocketClient();
-            client.Log += LogMessage;
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-            // Get our token and start the client
-            string token = Environment.GetEnvironmentVariable("SCRIMBOT_TOKEN", EnvironmentVariableTarget.Process);
-            await client.LoginAsync(TokenType.Bot, token).ConfigureAwait(false);
-            await client.StartAsync().ConfigureAwait(false);
+            path = Path.Combine(path, "ScrimBot");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
 
-            // Setup commands
-            CommandHandler handler = new CommandHandler(client, new CommandService());
-            await handler.InstallCommandsAsync().ConfigureAwait(false);
-
-            await client.SetGameAsync(COMMAND_PREFIX + "help", type: ActivityType.Listening).ConfigureAwait(false);
-
-            // Await console input to stop the program
-            Console.ReadKey();
-            await client.StopAsync().ConfigureAwait(false);
+            return path;
         }
 
         /// <summary>
         /// Routes the logging functionality of Discord.Net to Serilog
         /// </summary>
         /// <param name="message">The log message</param>
-        private Task LogMessage(LogMessage message)
+        private static Task LogMessage(LogMessage message)
         {
             switch (message.Severity)
             {
@@ -100,20 +130,6 @@ namespace ScrimBot
             }
 
             return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Retrieves the AppData folder for this app
-        /// </summary>
-        public static string GetAppdataFolder()
-        {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
-            path = Path.Combine(path, "ScrimBot");
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            return path;
         }
     }
 }

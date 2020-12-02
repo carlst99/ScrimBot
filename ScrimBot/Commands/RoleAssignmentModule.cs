@@ -49,8 +49,11 @@ namespace ScrimBot.Commands
                     continue;
                 }
 
-                await guildUser.AddRoleAsync(role).ConfigureAwait(false);
-                users += guildUser.GetFriendlyName() + ", ";
+                if (!guildUser.Roles.Contains(role))
+                {
+                    await guildUser.AddRoleAsync(role).ConfigureAwait(false);
+                    users += guildUser.GetFriendlyName() + ", ";
+                }
             }
 
             await ReplyAsync($"The role '{role}' was added to the following members: {users.TrimEnd(',', ' ')}").ConfigureAwait(false);
