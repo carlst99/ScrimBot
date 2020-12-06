@@ -1,3 +1,5 @@
+:warning: Note - the features of this bot have been rolled into [UVOCBot](https://github.com/carlst99/UVOCBot/), which both improves upon the features ScrimBot provides and adds many more PlanetSide 2-related capabilities.
+
 # ScrimBot
 
 ScrimBot aims to streamline the process of organising scrims for a Planetside 2 outfit through Discord, by providing bulk role assigning functions, a random team generator and a Jaeger account distributor. Note that the role assign functions are specifically built for the way the outfit I am part of (UVOC) organises their scrims, wherein we make an announcement and ask all those interested to react to the message with a specific emote.
